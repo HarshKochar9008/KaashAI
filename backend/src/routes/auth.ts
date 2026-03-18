@@ -45,7 +45,7 @@ router.post('/signup', async (req, res) => {
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: err.errors[0].message });
+      return res.status(400).json({ error: err.errors[0]?.message ?? 'Validation error' });
     }
     res.status(500).json({ error: err.message || 'Server error' });
   }
@@ -73,7 +73,7 @@ router.post('/login', async (req, res) => {
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: err.errors[0].message });
+      return res.status(400).json({ error: err.errors[0]?.message ?? 'Validation error' });
     }
     res.status(500).json({ error: err.message || 'Server error' });
   }

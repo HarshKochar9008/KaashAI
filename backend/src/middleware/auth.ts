@@ -17,10 +17,10 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
     return res.status(401).json({ error: 'Authentication required' });
   }
 
-  const token = header.split(' ')[1];
+  const token = header.split(' ')[1] as string;
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as unknown as { userId: string };
-    req.userId = decoded.userId;
+    const payload = jwt.verify(token, JWT_SECRET as string);
+    req.userId = (payload as jwt.JwtPayload).userId;
     next();
   } catch {
     return res.status(401).json({ error: 'Invalid or expired token' });

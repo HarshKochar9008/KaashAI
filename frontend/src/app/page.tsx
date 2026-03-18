@@ -53,7 +53,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navbar */}
-      <nav className="fixed top-4 inset-x-0 z-50 mx-auto max-w-5xl px-4">
+      <nav className="fixed top-4 inset-x-0 z-50 mx-auto max-w-4xl min-h-20 px-4">
         <div className="rounded-2xl border border-white/[0.12] bg-white/[0.05] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] px-6 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <Image src="/logo1.png" alt="KaashAI" width={28} height={28} className="rounded-md" />
@@ -121,16 +121,35 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="max-w-lg mx-auto mt-20 flex justify-center relative z-10">
-          <div className="relative animate-float">
+        <div className="max-w-2xl mx-auto mt-20 flex items-center justify-center gap-6 md:gap-10 relative z-10">
+          <div className="relative animate-float group">
             <Image
               src="/logo1.png"
               alt="KaashAI"
-              width={160}
-              height={160}
+              width={120}
+              height={120}
               className="relative z-10"
               style={{ background: 'transparent' }}
             />
+            <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-2xl font-extrabold bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+              KaashAI
+            </span>
+          </div>
+
+          <span className="text-3xl md:text-6xl font-light text-zinc-500 select-none ">&times;</span>
+
+          <div className="relative animate-float group" style={{ animationDelay: '0.5s' }}>
+            <Image
+              src="/tor.avif"
+              alt="Veda AI"
+              width={120}
+              height={120}
+              className="relative z-10 rounded-2xl"
+              style={{ background: 'transparent' }}
+            />
+            <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+              VedaAI
+            </span>
           </div>
         </div>
       </section>
