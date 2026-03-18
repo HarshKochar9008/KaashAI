@@ -1,4 +1,4 @@
-# Kaash AI Powerded by Veda AI / ExamCraft AI Application
+# KaashAI Powerded by Veda AI / ExamCraft AI Application
 
 A full-stack AI application to generate and evaluate exam content.
 
@@ -8,7 +8,7 @@ This project is a monorepo consisting of:
 - **Frontend**: A Next.js application built with Tailwind CSS, Zustand, and Framer Motion. 
 - **Backend API**: A Node.js and Express application integrating MongoDB (via Mongoose), Redis, BullMQ, and websockets.
 - **Worker**: A background worker powered by BullMQ to offload AI generation tasks via the Groq SDK.
-- **Database**: MongoDB for persistent storage, Redis for queueing and caching.
+- **Database**: MongoDB for persistent storage, Redis for queueing and caching. 
 
 ## Prerequisites
 
@@ -54,4 +54,4 @@ docker compose down
 
 - `frontend/`: Next.js web application.
 - `backend/src/`: Express server, HTTP routes, controllers, and MongoDB models.
-- `backend/src/workers/`: BullMQ worker specifically handling the Anthropic AI integration for task generation.
+- `backend/src/workers/`: BullMQ worker specifically handling the AI integration for task generation.

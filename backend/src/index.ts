@@ -5,7 +5,7 @@ import cors from 'cors';
 import { WebSocketServer } from 'ws';
 import * as dotenv from 'dotenv';
 import assignmentsRouter from './routes/assignments';
-import usersRouter from './routes/users';
+import authRouter from './routes/auth';
 import { setWebSocketServer } from './config/redis';
 import IORedis from 'ioredis';
 
@@ -21,8 +21,8 @@ mongoose.connect(MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
+app.use('/api/auth', authRouter);
 app.use('/api/assignments', assignmentsRouter);
-app.use('/api/users', usersRouter);
 
 const server = http.createServer(app);
 

@@ -1,91 +1,250 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
-export default function AssignmentsPage() {
-  const [assignments, setAssignments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+const features = [
+  {
+    title: "AI Exam Generation",
+    description: "Automatically generate comprehensive exam papers from your uploaded curriculum materials using frontier AI models.",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Multi-Format Questions",
+    description: "Create MCQs, short answers, essays, and true/false questions with configurable difficulty levels.",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Instant PDF Export",
+    description: "Export beautifully formatted exam papers as PDFs, ready to print and distribute to students.",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Real-Time Progress",
+    description: "Track exam generation progress in real-time with live WebSocket updates as the AI processes your content.",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+      </svg>
+    ),
+  },
+];
 
-  useEffect(() => {
-    fetch('http://localhost:3001/api/assignments')
-      .then(res => res.json())
-      .then(data => {
-        setAssignments(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, []);
+const stats = [
+  { value: "10K+", label: "Exams Generated" },
+  { value: "500+", label: "Institutions" },
+  { value: "< 60s", label: "Generation Time" },
+  { value: "99.9%", label: "Uptime" },
+];
 
-  if (loading) {
-    return <div className="text-slate-500 animate-pulse">Loading assignments...</div>;
-  }
-
-  if (assignments.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full pt-20">
-        <div className="w-48 h-48 bg-slate-100 rounded-full flex items-center justify-center mb-6 relative">
-          <div className="absolute grid grid-cols-2 gap-2 opacity-30">
-             <div className="w-16 h-8 bg-slate-300 rounded-full" />
-             <div className="w-8 h-8 bg-slate-300 rounded-full" />
-             <div className="w-12 h-12 bg-slate-300 rounded-lg absolute" style={{left: 20, top: 40}} />
-          </div>
-          <span className="text-4xl">❌</span>
-        </div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">No assignments yet</h2>
-        <p className="text-slate-500 text-center max-w-sm mb-8">
-          Create your first assignment to start collecting and grading student submissions. You can set up rubrics, define marking criteria, and let AI assist with grading.
-        </p>
-        <Link href="/create" className="bg-slate-900 text-white font-medium rounded-full py-3 px-6 hover:bg-slate-800 transition">
-          + Create Your First Assignment
-        </Link>
-      </div>
-    );
-  }
-
+export default function LandingPage() {
   return (
-    <div>
-      <div className="mb-6 flex gap-2 items-center text-slate-700">
-         <span className="w-3 h-3 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
-         <h2 className="text-xl font-bold leading-none">Assignments</h2>
-      </div>
-      <p className="text-slate-500 text-sm mb-6 pb-4 border-b border-slate-200">Manage and create assignments for your classes.</p>
-      
-      <div className="flex gap-4 mb-8">
-         <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-full text-sm font-medium hover:bg-slate-200 transition">
-           <span>▼</span> Filter By
-         </button>
-         <div className="flex-1 max-w-md relative">
-           <input type="text" placeholder="Search Assignment" className="w-full bg-white border border-slate-200 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
-           <span className="absolute left-4 top-2.5 text-slate-400">🔍</span>
-         </div>
-      </div>
+    <div className="min-h-screen bg-black text-white">
+      {/* Navbar */}
+      <nav className="fixed top-4 inset-x-0 z-50 mx-auto max-w-5xl px-4">
+        <div className="rounded-2xl border border-white/[0.12] bg-white/[0.05] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] px-6 h-14 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image src="/logo1.png" alt="KaashAI" width={28} height={28} className="rounded-md" />
+            <span className="text-lg font-bold tracking-tight">Kaash<span className="text-brand-400">AI</span></span>
+          </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {assignments.map((assignment: any) => (
-          <div key={assignment._id} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group">
-            <div className="flex justify-between items-start mb-8">
-               <h3 className="text-lg font-bold text-slate-800">{assignment.title}</h3>
-               <Link href={`/results/${assignment._id}`} className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-900 transition">
-                 ⋮
-               </Link>
-            </div>
-            
-            <div className="flex justify-between items-center text-sm">
-               <span className="text-slate-500 font-medium">Assigned on: <span className="text-slate-700">{new Date(assignment.createdAt).toLocaleDateString()}</span></span>
-               <span className="font-semibold px-3 py-1 bg-slate-100 rounded-full text-slate-600 shadow-sm">{assignment.status}</span>
-            </div>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+            <a href="#features" className="hover:text-white transition">Features</a>
+            <a href="#how-it-works" className="hover:text-white transition">How it Works</a>
+            <a href="#stats" className="hover:text-white transition">Stats</a>
           </div>
-        ))}
-      </div>
-      
-      <div className="flex justify-center mt-12 pb-12">
-        <Link href="/create" className="bg-slate-900 text-white font-medium rounded-full py-3 px-8 hover:bg-slate-800 transition shadow-lg">
-          + Create Assignment
-        </Link>
-      </div>
+
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="text-sm font-medium text-zinc-400 hover:text-white px-4 py-2 rounded-xl transition">
+              Sign In
+            </Link>
+            <Link href="/signup" className="text-sm font-semibold text-black bg-white hover:bg-zinc-200 px-5 py-2 rounded-xl transition">
+              Get Started
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section className="relative pt-32 pb-24 overflow-hidden">
+        {/* Grid + glow background */}
+        <div className="absolute inset-0 bg-grid" />
+        <div className="absolute inset-0 bg-noise" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-brand-600/15 blur-[120px] animate-glow-pulse" />
+        <div className="absolute top-40 -right-40 w-[400px] h-[400px] rounded-full bg-purple-600/10 blur-[100px]" />
+        <div className="absolute top-60 -left-40 w-[300px] h-[300px] rounded-full bg-cyan-500/10 blur-[100px]" />
+
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/[0.08] rounded-full px-4 py-1.5 mb-8 backdrop-blur-xl">
+            <span className="w-2 h-2 rounded-full bg-brand-400 animate-pulse" />
+            <span className="text-sm font-medium text-zinc-300">AI-Powered Exam Platform</span>
+          </div>
+
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.08] mb-6">
+            AI for educators,<br />
+            <span className="bg-gradient-to-r from-brand-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              built from India
+            </span>
+          </h1>
+
+          <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed mb-12">
+            Upload your curriculum. Configure questions. Let KaashAI generate
+            comprehensive exam papers in seconds &mdash; powered by frontier AI models.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/signup"
+              className="group bg-white text-black font-semibold rounded-full px-8 py-4 text-base hover:bg-zinc-100 transition shadow-[0_0_40px_rgba(59,130,246,0.15)] hover:shadow-[0_0_60px_rgba(59,130,246,0.25)] hover:-translate-y-0.5 active:scale-95"
+            >
+              Experience KaashAI
+              <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </Link>
+            <Link
+              href="/login"
+              className="text-zinc-300 font-semibold rounded-full px-8 py-4 text-base border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] backdrop-blur-xl transition hover:-translate-y-0.5"
+            >
+              Sign In
+            </Link>
+          </div>
+        </div>
+
+        <div className="max-w-lg mx-auto mt-20 flex justify-center relative z-10">
+          <div className="relative animate-float">
+            <Image
+              src="/logo1.png"
+              alt="KaashAI"
+              width={160}
+              height={160}
+              className="relative z-10"
+              style={{ background: 'transparent' }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section id="stats" className="py-16 border-y border-white/[0.06] bg-white/[0.01]">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <p className="text-3xl md:text-4xl font-extrabold bg-gradient-to-b from-white to-zinc-500 bg-clip-text text-transparent mb-1">
+                  {stat.value}
+                </p>
+                <p className="text-sm text-zinc-500 font-medium">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section id="features" className="py-24 relative">
+        <div className="absolute inset-0 bg-grid opacity-50" />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
+              Everything you need to craft exams
+            </h2>
+            <p className="text-lg text-zinc-500 max-w-xl mx-auto">
+              A complete AI toolkit designed for teachers who want to save time without compromising quality.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                className="group bg-white/[0.03] rounded-2xl p-8 border border-white/[0.06] hover:border-brand-500/30 hover:bg-white/[0.05] transition-all duration-300 backdrop-blur-sm"
+              >
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-500/20 to-cyan-500/20 border border-brand-500/20 flex items-center justify-center text-brand-400 mb-5 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-all">
+                  {feature.icon}
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
+                <p className="text-zinc-500 leading-relaxed text-sm">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it Works */}
+      <section id="how-it-works" className="py-24 bg-white/[0.02] border-y border-white/[0.06]">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
+              Three steps to your exam
+            </h2>
+            <p className="text-lg text-zinc-500">From curriculum to exam paper in under a minute.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { step: "01", title: "Upload Content", desc: "Upload PDFs or text files of your syllabus, textbook chapters, or course materials." },
+              { step: "02", title: "Configure Sections", desc: "Choose question types, counts, and difficulty levels. Customise every detail." },
+              { step: "03", title: "Generate & Export", desc: "AI generates a complete exam paper. Review, toggle answers, and export as PDF." },
+            ].map((item, i) => (
+              <div key={item.step} className="text-center relative">
+                {i < 2 && (
+                  <div className="hidden md:block absolute top-7 left-[60%] w-[80%] h-px bg-gradient-to-r from-white/10 to-transparent" />
+                )}
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500/20 to-purple-500/20 border border-white/[0.08] flex items-center justify-center text-brand-400 font-bold text-lg mx-auto mb-5">
+                  {item.step}
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-zinc-500 leading-relaxed text-sm">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-brand-600/10 blur-[120px]" />
+        <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6">
+            Ready to transform<br />exam creation?
+          </h2>
+          <p className="text-lg text-zinc-500 mb-10 max-w-xl mx-auto">
+            Join educators across India who are saving hours every week with AI-powered exam generation.
+          </p>
+          <Link
+            href="/signup"
+            className="group inline-flex items-center gap-2 bg-white text-black font-semibold rounded-full px-8 py-4 text-base hover:bg-zinc-100 transition shadow-[0_0_40px_rgba(59,130,246,0.15)] hover:shadow-[0_0_60px_rgba(59,130,246,0.25)] hover:-translate-y-0.5 active:scale-95"
+          >
+            Get Started Free
+            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-white/[0.06] py-12">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <Image src="/logo1.png" alt="KaashAI" width={24} height={24} className="rounded-sm" />
+            <span className="font-bold text-sm">Kaash<span className="text-brand-400">AI</span></span>
+          </div>
+          <p className="text-sm text-zinc-600">&copy; {new Date().getFullYear()} KaashAI. AI for educators, built from India.</p>
+        </div>
+      </footer>
     </div>
   );
 }

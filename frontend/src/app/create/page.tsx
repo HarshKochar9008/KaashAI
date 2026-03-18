@@ -6,6 +6,7 @@ import FileUpload from '@/components/forms/FileUpload';
 import SectionConfigurator from '@/components/forms/SectionConfigurator';
 import GenerationProgress from '@/components/ui/GenerationProgress';
 import { useWebSocket } from '@/lib/useWebSocket';
+import { getAuthHeader } from '@/store/authStore';
 
 export default function CreateAssignmentPage() {
   const router = useRouter();
@@ -47,6 +48,7 @@ export default function CreateAssignmentPage() {
     try {
       const res = await fetch('http://localhost:3001/api/assignments', {
         method: 'POST',
+        headers: { ...getAuthHeader() },
         body: formData,
       });
       const data = await res.json();
@@ -67,45 +69,44 @@ export default function CreateAssignmentPage() {
   return (
     <div className="max-w-4xl mx-auto pb-16">
       <div className="mb-10 text-center">
-        <h2 className="text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">Create Assignment</h2>
-        <p className="text-slate-500 max-w-lg mx-auto text-lg leading-relaxed">Let VedaAI construct a comprehensive exam tailored to your needs based on the provided curriculum.</p>
+        <h2 className="text-4xl font-extrabold text-white mb-3 tracking-tight">Create Assignment</h2>
+        <p className="text-zinc-500 max-w-lg mx-auto text-lg leading-relaxed">Let KaashAI construct a comprehensive exam tailored to your needs based on the provided curriculum.</p>
       </div>
       
-      <form onSubmit={handleSubmit} className="space-y-12 bg-white/50 p-8 rounded-[2rem] border border-slate-100 shadow-xl backdrop-blur-xl relative overflow-hidden">
-        {/* Glow effect */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-orange-50 rounded-full blur-[100px] -z-10 opacity-50"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-50 rounded-full blur-[100px] -z-10 opacity-50"></div>
+      <form onSubmit={handleSubmit} className="space-y-10 bg-white/[0.03] p-8 rounded-2xl border border-white/[0.06] backdrop-blur-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/5 rounded-full blur-[100px] -z-10"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/5 rounded-full blur-[100px] -z-10"></div>
         
         <div className="space-y-6">
-          <h3 className="text-xl font-bold text-slate-800 flex items-center gap-3">
-            <span className="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-sm font-bold shadow-sm">1</span> 
+          <h3 className="text-lg font-bold text-zinc-200 flex items-center gap-3">
+            <span className="w-7 h-7 rounded-lg bg-brand-500/15 text-brand-400 flex items-center justify-center text-xs font-bold border border-brand-500/20">1</span> 
             Basic Information
           </h3>
-          <div className="grid grid-cols-1 gap-6 pl-11">
-             <div>
-               <label className="block text-sm font-bold text-slate-700 mb-2">Assignment Title</label>
-               <input 
-                 type="text" 
-                 value={title}
-                 onChange={(e) => setTitle(e.target.value)}
-                 className="w-full text-lg bg-white border border-slate-200 rounded-xl p-4 focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition shadow-sm placeholder:text-slate-300" 
-                 placeholder="e.g. Midterm Physics Evaluation"
-                 required 
-               />
-             </div>
-             <div>
-               <label className="block text-sm font-bold text-slate-700 mb-2">Description (Optional)</label>
-               <textarea 
-                 value={description}
-                 onChange={(e) => setDescription(e.target.value)}
-                 className="w-full bg-white border border-slate-200 rounded-xl p-4 focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition shadow-sm resize-none h-24 placeholder:text-slate-300" 
-                 placeholder="Add context or instructions for your view..."
-               />
-             </div>
+          <div className="grid grid-cols-1 gap-6 pl-10">
+            <div>
+              <label className="block text-sm font-semibold text-zinc-400 mb-2">Assignment Title</label>
+              <input 
+                type="text" 
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full text-base bg-white/[0.04] border border-white/[0.08] rounded-xl p-4 text-white placeholder:text-zinc-600 focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500/50 outline-none transition" 
+                placeholder="e.g. Midterm Physics Evaluation"
+                required 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-zinc-400 mb-2">Description (Optional)</label>
+              <textarea 
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl p-4 text-white placeholder:text-zinc-600 focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500/50 outline-none transition resize-none h-24" 
+                placeholder="Add context or instructions for your exam..."
+              />
+            </div>
           </div>
         </div>
 
-        <div className="pl-11 border-t border-slate-100 pt-10">
+        <div className="pl-10 border-t border-white/[0.06] pt-10">
           <FileUpload />
         </div>
 
@@ -113,14 +114,17 @@ export default function CreateAssignmentPage() {
           <SectionConfigurator />
         </div>
 
-        <div className="flex justify-end pt-8 border-t border-slate-100">
-           <button 
-             type="submit" 
-             disabled={isSubmitting || !title || files.length === 0}
-             className="bg-slate-900 text-white font-bold rounded-full py-4 px-10 hover:bg-slate-800 hover:shadow-lg hover:shadow-slate-900/20 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 active:scale-95"
-           >
-             Generate Exam <span>→</span>
-           </button>
+        <div className="flex justify-end pt-8 border-t border-white/[0.06]">
+          <button 
+            type="submit" 
+            disabled={isSubmitting || !title || files.length === 0}
+            className="bg-white text-black font-bold rounded-full py-3.5 px-10 hover:bg-zinc-200 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-3 active:scale-95"
+          >
+            Generate Exam
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </button>
         </div>
       </form>
 

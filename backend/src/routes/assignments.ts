@@ -4,6 +4,7 @@ import { z } from 'zod';
 const pdfParse = require('pdf-parse');
 import { Assignment } from '../models/Assignment';
 import { generationQueue } from '../config/queue';
+import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -26,7 +27,7 @@ const assignmentBodySchema = z.object({
   }).pipe(z.array(sectionSchema).optional())
 });
 
-router.post('/', upload.array('files'), async (req, res) => {
+router.post('/', authMiddleware, upload.array('files'), async (req: AuthRequest, res) => {
   try {
     const data = assignmentBodySchema.parse(req.body);
 
@@ -40,7 +41,7 @@ router.post('/', upload.array('files'), async (req, res) => {
         } else if (file.mimetype === 'text/plain') {
           content = file.buffer.toString('utf-8');
         } else {
-          continue; // skip other formats
+          continue;
         }
         inputFiles.push({
           filename: file.originalname,
@@ -51,6 +52,7 @@ router.post('/', upload.array('files'), async (req, res) => {
     }
 
     const assignment = new Assignment({
+      userId: req.userId,
       title: data.title,
       description: data.description,
       inputFiles,
@@ -67,13 +69,12 @@ router.post('/', upload.array('files'), async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', authMiddleware, async (req: AuthRequest, res) => {
   try {
-    const assignment = await Assignment.findById(req.params.id);
+    const assignment = await Assignment.findOne({ _id: req.params.id, userId: req.userId });
     if (!assignment) {
       return res.status(404).json({ error: 'Not found' });
     }
-    // Omit large content fields from response for performance usually, but maybe they want it
     const { inputFiles, ...copy } = assignment.toObject();
     res.json(copy);
   } catch (e) {
@@ -81,9 +82,9 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req: AuthRequest, res) => {
   try {
-    const list = await Assignment.find().sort({ createdAt: -1 }).select('-inputFiles -result');
+    const list = await Assignment.find({ userId: req.userId }).sort({ createdAt: -1 }).select('-inputFiles -result');
     res.json(list);
   } catch (e) {
     res.status(500).json({ error: 'Server error' });

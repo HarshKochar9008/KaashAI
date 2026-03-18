@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const assignmentSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   title: { type: String, required: true },
   description: { type: String, required: false },
   status: { type: String, enum: ['pending', 'processing', 'completed', 'failed'], default: 'pending' },
