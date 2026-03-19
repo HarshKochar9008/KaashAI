@@ -20,6 +20,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   loadUser: () => Promise<void>;
+  updateProfile: (updates: Partial<Pick<User, 'name' | 'institution' | 'location'>>) => Promise<boolean>;
   clearError: () => void;
 }
 
@@ -97,6 +98,32 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ user: data.user, loading: false });
     } catch {
       set({ loading: false });
+    }
+  },
+
+  updateProfile: async (updates) => {
+    const token = get().token;
+    if (!token) return false;
+    set({ error: null });
+    try {
+      const res = await fetch(`${API_URL}/api/auth/me`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updates),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        set({ error: data.error || 'Failed to update profile' });
+        return false;
+      }
+      set({ user: data.user });
+      return true;
+    } catch {
+      set({ error: 'Network error. Please try again.' });
+      return false;
     }
   },
 

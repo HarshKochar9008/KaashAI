@@ -91,4 +91,32 @@ router.get('/me', authMiddleware, async (req: AuthRequest, res) => {
   }
 });
 
+const updateMeSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters').optional(),
+  institution: z.string().optional(),
+  location: z.string().optional(),
+});
+
+router.put('/me', authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    const data = updateMeSchema.parse(req.body);
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (typeof data.name === 'string') user.name = data.name;
+    if (typeof data.institution === 'string') user.institution = data.institution;
+    if (typeof data.location === 'string') user.location = data.location;
+
+    await user.save();
+    res.json({ user: user.toJSON() });
+  } catch (err: any) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({ error: err.errors[0]?.message ?? 'Validation error' });
+    }
+    res.status(500).json({ error: err.message || 'Server error' });
+  }
+});
+
 export default router;

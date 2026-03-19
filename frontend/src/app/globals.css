@@ -7,6 +7,31 @@
   --foreground: #f1f5f9;
 }
 
+/* Dashboard-only theming (independent of global theme) */
+.dashboard-theme-light {
+  --dash-bg: #ffffff;
+  --dash-surface: #f8fafc;
+  --dash-surface-2: #ffffff;
+  --dash-border: rgba(15, 23, 42, 0.10);
+  --dash-border-2: rgba(15, 23, 42, 0.08);
+  --dash-fg: #0f172a;
+  --dash-muted: #475569;
+  --dash-muted-2: #64748b;
+  --dash-input: rgba(15, 23, 42, 0.04);
+}
+
+.dashboard-theme-dark {
+  --dash-bg: #000000;
+  --dash-surface: #0b0f14;
+  --dash-surface-2: rgba(255, 255, 255, 0.03);
+  --dash-border: rgba(255, 255, 255, 0.08);
+  --dash-border-2: rgba(255, 255, 255, 0.06);
+  --dash-fg: #f1f5f9;
+  --dash-muted: #94a3b8;
+  --dash-muted-2: #64748b;
+  --dash-input: rgba(255, 255, 255, 0.04);
+}
+
 body {
   color: var(--foreground);
   background: var(--background);

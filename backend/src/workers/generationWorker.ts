@@ -3,12 +3,10 @@ import IORedis from 'ioredis';
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
 import { Assignment } from '../models/Assignment';
-import { generateExamContent } from '../services/aiService';
+import { generateExamContent, SectionInput } from '../services/aiService';
 
 dotenv.config();
 
-// We can just use a separate Redis connection to publish WS messages directly if they are running in different processes,
-// but for simplicity let's use a simple pub/sub approach to notify the main server.
 const pub = new IORedis({
   host: process.env.REDIS_HOST || '127.0.0.1',
   port: parseInt(process.env.REDIS_PORT || '6379'),
@@ -42,16 +40,23 @@ const worker = new Worker('exam-generation', async (job: Job) => {
     assignment.status = 'processing';
     await assignment.save();
     
-    // Merge context
     await updateStatus(assignmentId, 'Reading files...');
     const contextText = assignment.inputFiles.map((f: any) => f.content).join('\n\n');
-    let sections: any[] = assignment.sections || [];
+
+    let sections: SectionInput[] = (assignment.sections || []).map((s: any) => ({
+      type: s.type || 'MCQ',
+      count: s.count || 5,
+      difficulty: s.difficulty || 'medium',
+      marksPerQuestion: s.marksPerQuestion || 1,
+    }));
+
     if (sections.length === 0) {
-      // Default
-      sections = [{ type: 'multiple_choice', count: 5, difficulty: 'medium' }];
+      sections = [{ type: 'MCQ', count: 5, difficulty: 'medium', marksPerQuestion: 1 }];
     }
 
-    const result = await generateExamContent(contextText, sections, (statusText) => {
+    const additionalInstructions = (assignment as any).additionalInstructions || '';
+
+    const result = await generateExamContent(contextText, sections, additionalInstructions, (statusText) => {
       updateStatus(assignmentId, statusText);
     });
 
@@ -74,5 +79,5 @@ const worker = new Worker('exam-generation', async (job: Job) => {
 }, { connection: redisConnection as any });
 
 worker.on('ready', () => {
-    console.log('Worker is running and waiting for jobs on queue "exam-generation"');
+  console.log('Worker is running and waiting for jobs on queue "exam-generation"');
 });

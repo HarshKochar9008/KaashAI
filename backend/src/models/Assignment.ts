@@ -4,6 +4,9 @@ const assignmentSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   title: { type: String, required: true },
   description: { type: String, required: false },
+  dueDate: { type: Date, default: null },
+  totalMarks: { type: Number, default: null },
+  additionalInstructions: { type: String, default: '' },
   status: { type: String, enum: ['pending', 'processing', 'completed', 'failed'], default: 'pending' },
   inputFiles: [{ 
     filename: String,
@@ -11,9 +14,10 @@ const assignmentSchema = new mongoose.Schema({
     mimetype: String
   }],
   sections: [{
-    type: { type: String }, // e.g., 'mcq', 'short_answer', 'essay'
+    type: { type: String },
     count: { type: Number },
-    difficulty: { type: String }
+    difficulty: { type: String },
+    marksPerQuestion: { type: Number, default: 1 }
   }],
   result: { type: Object, default: null },
   error: { type: String, default: null },

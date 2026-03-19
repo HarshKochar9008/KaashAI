@@ -1,41 +1,49 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
+
+type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'reconnecting';
 
 export function useWebSocket(url: string) {
-  const [messages, setMessages] = useState<any>(null);
+  const [messages, setMessages] = useState<unknown>(null);
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting');
   const ws = useRef<WebSocket | null>(null);
-  const reconnectInterval = useRef<any>(null);
+  const reconnectInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    const connect = () => {
-      ws.current = new WebSocket(url);
-      
-      ws.current.onopen = () => {
-        console.log('WS Connected');
-        if (reconnectInterval.current) {
-          clearInterval(reconnectInterval.current);
-          reconnectInterval.current = null;
-        }
-      };
+  const connect = useCallback(() => {
+    setConnectionStatus('connecting');
+    ws.current = new WebSocket(url);
 
-      ws.current.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          setMessages(data);
-        } catch (e) {
-          console.error(e);
-        }
-      };
-
-      ws.current.onclose = () => {
-        console.log('WS Disconnected, retrying...');
-        if (!reconnectInterval.current) {
-          reconnectInterval.current = setInterval(() => {
-            connect();
-          }, 3000);
-        }
-      };
+    ws.current.onopen = () => {
+      setConnectionStatus('connected');
+      if (reconnectInterval.current) {
+        clearInterval(reconnectInterval.current);
+        reconnectInterval.current = null;
+      }
     };
 
+    ws.current.onmessage = (event) => {
+      try {
+        const data: unknown = JSON.parse(event.data);
+        setMessages(data);
+      } catch (e) {
+        console.error('WS parse error:', e);
+      }
+    };
+
+    ws.current.onclose = () => {
+      setConnectionStatus('reconnecting');
+      if (!reconnectInterval.current) {
+        reconnectInterval.current = setInterval(() => {
+          connect();
+        }, 3000);
+      }
+    };
+
+    ws.current.onerror = () => {
+      setConnectionStatus('disconnected');
+    };
+  }, [url]);
+
+  useEffect(() => {
     connect();
 
     return () => {
@@ -46,7 +54,7 @@ export function useWebSocket(url: string) {
         clearInterval(reconnectInterval.current);
       }
     };
-  }, [url]);
+  }, [connect]);
 
-  return [messages];
+  return [messages, connectionStatus] as const;
 }

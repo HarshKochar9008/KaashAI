@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -50,13 +50,15 @@ const stats = [
 ];
 
 export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navbar */}
-      <nav className="fixed top-4 inset-x-0 z-50 mx-auto max-w-4xl min-h-20 px-4">
-        <div className="rounded-2xl border border-white/[0.12] bg-white/[0.05] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] px-6 h-14 flex items-center justify-between">
+      <nav className="fixed top-4 inset-x-0 z-50 mx-auto max-w-4xl px-4">
+        <div className="rounded-2xl border border-white/[0.12] bg-white/[0.05] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/logo1.png" alt="KaashAI" width={28} height={28} className="rounded-md" />
+            <Image style={{ background: 'transparent' }} src="/logo1.png" alt="KaashAI" width={28} height={28} className="rounded-md bg-transparent" />
             <span className="text-lg font-bold tracking-tight">Kaash<span className="text-brand-400">AI</span></span>
           </Link>
 
@@ -66,7 +68,7 @@ export default function LandingPage() {
             <a href="#stats" className="hover:text-white transition">Stats</a>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3">
             <Link href="/login" className="text-sm font-medium text-zinc-400 hover:text-white px-4 py-2 rounded-xl transition">
               Sign In
             </Link>
@@ -74,12 +76,39 @@ export default function LandingPage() {
               Get Started
             </Link>
           </div>
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden flex flex-col items-center justify-center w-10 h-10 rounded-xl hover:bg-white/[0.08] transition"
+            aria-label="Toggle menu"
+          >
+            <span className={`block w-5 h-0.5 bg-white rounded-full transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-[3px]' : ''}`} />
+            <span className={`block w-5 h-0.5 bg-white rounded-full mt-1 transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-[3px]' : ''}`} />
+          </button>
+        </div>
+
+        {/* Mobile dropdown */}
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ${mobileMenuOpen ? 'max-h-72 opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0'}`}>
+          <div className="rounded-2xl border border-white/[0.12] bg-black/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] p-5 flex flex-col gap-4">
+            <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-zinc-400 hover:text-white transition py-1">Features</a>
+            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-zinc-400 hover:text-white transition py-1">How it Works</a>
+            <a href="#stats" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-zinc-400 hover:text-white transition py-1">Stats</a>
+            <hr className="border-white/[0.08]" />
+            <div className="flex flex-col gap-3">
+              <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-zinc-400 hover:text-white text-center py-2 rounded-xl border border-white/[0.08] transition">
+                Sign In
+              </Link>
+              <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className="text-sm font-semibold text-black bg-white hover:bg-zinc-200 text-center py-2 rounded-xl transition">
+                Get Started
+              </Link>
+            </div>
+          </div>
         </div>
       </nav>
 
       {/* Hero */}
       <section className="relative pt-32 pb-24 overflow-hidden">
-        {/* Grid + glow background */}
         <div className="absolute inset-0 bg-grid" />
         <div className="absolute inset-0 bg-noise" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-brand-600/15 blur-[120px] animate-glow-pulse" />
@@ -94,7 +123,7 @@ export default function LandingPage() {
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.08] mb-6">
             AI for educators,<br />
-            <span className="bg-gradient-to-r from-brand-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-brand-400 via-cyan-200 to-white bg-clip-text text-transparent">
               built from India
             </span>
           </h1>
@@ -129,7 +158,6 @@ export default function LandingPage() {
               width={120}
               height={120}
               className="relative z-10"
-              style={{ background: 'transparent' }}
             />
             <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-2xl font-extrabold bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
               KaashAI
@@ -255,13 +283,14 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.06] py-12">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer className="relative py-12 bg-gradient-to-b from-white/[0.06] via-blue-500/[0.08] to-blue-600/[0.15] border-t border-white/[0.08]">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400/[0.05] to-transparent pointer-events-none" />
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-2.5">
             <Image src="/logo1.png" alt="KaashAI" width={24} height={24} className="rounded-sm" />
             <span className="font-bold text-sm">Kaash<span className="text-brand-400">AI</span></span>
           </div>
-          <p className="text-sm text-zinc-600">&copy; {new Date().getFullYear()} KaashAI. AI for educators, built from India.</p>
+          <p className="text-sm text-zinc-400">&copy; {new Date().getFullYear()} KaashAI. AI for educators, built from India.</p>
         </div>
       </footer>
     </div>
