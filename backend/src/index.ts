@@ -40,10 +40,12 @@ wss.on('connection', (ws) => {
 });
 
 // Redis subscriber for external worker messages
-const sub = new IORedis({
-  host: process.env.REDIS_HOST || '127.0.0.1',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-});
+const sub = process.env.REDIS_URL
+  ? new IORedis(process.env.REDIS_URL)
+  : new IORedis({
+      host: process.env.REDIS_HOST || '127.0.0.1',
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+    });
 sub.subscribe('ws_broadcast', (err, count) => {
   if (err) {
     console.error('Failed to subscribe to Redis Channel ws_broadcast', err);
