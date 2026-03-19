@@ -44,9 +44,20 @@ const worker = new Worker('exam-generation', async (job: Job) => {
     
     assignment.status = 'processing';
     await assignment.save();
-    
+
     await updateStatus(assignmentId, 'Reading files...');
-    const contextText = assignment.inputFiles.map((f: any) => f.content).join('\n\n');
+
+    // Limit total context size so very large uploads don't make generation extremely slow.
+    const MAX_CONTEXT_CHARS = 20000;
+    let contextText = assignment.inputFiles.map((f: any) => f.content).join('\n\n');
+    if (contextText.length > MAX_CONTEXT_CHARS) {
+      contextText = contextText.slice(0, MAX_CONTEXT_CHARS);
+      console.log(
+        `Job ${assignmentId}: context truncated to ${MAX_CONTEXT_CHARS} characters from ${assignment.inputFiles
+          .map((f: any) => f.content.length)
+          .reduce((a: number, b: number) => a + b, 0)} total`
+      );
+    }
 
     let sections: SectionInput[] = (assignment.sections || []).map((s: any) => ({
       type: s.type || 'MCQ',
