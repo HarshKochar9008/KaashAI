@@ -11,59 +11,73 @@ import IORedis from 'ioredis';
 
 dotenv.config();
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+async function start() {
+  const app = express();
+  app.use(cors());
+  app.use(express.json());
 
-const MONGODB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/vedaai';
+  // Prevent long "buffering timed out" waits when Mongo is down
+  mongoose.set('bufferCommands', false);
 
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+  const MONGODB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/vedaai';
 
-app.use('/api/auth', authRouter);
-app.use('/api/assignments', assignmentsRouter);
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 30000,
+      connectTimeoutMS: 30000,
+    });
+    console.log('Connected to MongoDB');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    console.error('MONGO_URI:', MONGODB_URI);
+    process.exit(1);
+  }
 
-const server = http.createServer(app);
+  app.use('/api/auth', authRouter);
+  app.use('/api/assignments', assignmentsRouter);
 
-// WebSocket Server for progress updates
-const wss = new WebSocketServer({ server, path: '/ws' });
-setWebSocketServer(wss);
+  const server = http.createServer(app);
 
-wss.on('connection', (ws) => {
-  console.log('Client connected to WebSocket');
-  ws.send(JSON.stringify({ type: 'connected', message: 'WebSocket Connected!' }));
-  
-  ws.on('close', () => {
-    console.log('Client disconnected');
+  // WebSocket Server for progress updates
+  const wss = new WebSocketServer({ server, path: '/ws' });
+  setWebSocketServer(wss);
+
+  wss.on('connection', (ws) => {
+    console.log('Client connected to WebSocket');
+    ws.send(JSON.stringify({ type: 'connected', message: 'WebSocket Connected!' }));
+
+    ws.on('close', () => {
+      console.log('Client disconnected');
+    });
   });
-});
 
-// Redis subscriber for external worker messages
-const sub = process.env.REDIS_URL
-  ? new IORedis(process.env.REDIS_URL)
-  : new IORedis({
-      host: process.env.REDIS_HOST || '127.0.0.1',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-    });
-sub.subscribe('ws_broadcast', (err, count) => {
-  if (err) {
-    console.error('Failed to subscribe to Redis Channel ws_broadcast', err);
-  }
-});
+  const sub = process.env.REDIS_URL
+    ? new IORedis(process.env.REDIS_URL)
+    : new IORedis({
+        host: process.env.REDIS_HOST || '127.0.0.1',
+        port: parseInt(process.env.REDIS_PORT || '6379'),
+      });
 
-sub.on('message', (channel, message) => {
-  if (channel === 'ws_broadcast') {
-    // broadcast message to connected clients
-    wss.clients.forEach((client) => {
-      if (client.readyState === 1) { // OPEN
-        client.send(message);
-      }
-    });
-  }
-});
+  sub.subscribe('ws_broadcast', (err) => {
+    if (err) {
+      console.error('Failed to subscribe to Redis Channel ws_broadcast', err);
+    }
+  });
 
-const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+  sub.on('message', (channel, message) => {
+    if (channel === 'ws_broadcast') {
+      wss.clients.forEach((client) => {
+        if (client.readyState === 1) {
+          client.send(message);
+        }
+      });
+    }
+  });
+
+  const PORT = process.env.PORT || 3001;
+  server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+start();
