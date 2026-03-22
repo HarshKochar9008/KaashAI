@@ -30,21 +30,6 @@ export default function NoAssignmentsMobile() {
               </svg>
             </button>
 
-            <svg
-              className="w-4 h-4 text-[#8A8F98] flex-shrink-0"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <rect x="1.5" y="1.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-              <rect x="6.5" y="1.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-              <rect x="11.5" y="1.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-              <rect x="1.5" y="6.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-              <rect x="6.5" y="6.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-              <rect x="11.5" y="6.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-            </svg>
-
             <h2 className="text-[14px] font-semibold text-[#6B7280] leading-none truncate">Assignment</h2>
           </div>
 

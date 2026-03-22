@@ -59,16 +59,8 @@ type DashboardTheme = 'light' | 'dark';
 //   );
 // }
 
-function Sidebar({
-  showDashboardThemeToggle,
-  dashboardTheme,
-  onToggleDashboardTheme,
-}: {
-  showDashboardThemeToggle: boolean;
-  dashboardTheme: DashboardTheme;
-  onToggleDashboardTheme: () => void;
-}) {
-  const { user, logout } = useAuthStore();
+function Sidebar() {
+  const { user } = useAuthStore();
   const pathname = usePathname();
   const router = useRouter(); 
   const navItems = [
@@ -208,15 +200,7 @@ function Sidebar({
   );
 }
 
-function MobileNav({
-  showDashboardThemeToggle,
-  dashboardTheme,
-  onToggleDashboardTheme,
-}: {
-  showDashboardThemeToggle: boolean;
-  dashboardTheme: DashboardTheme;
-  onToggleDashboardTheme: () => void;
-}) {
+function MobileNav() {
   const { user, logout } = useAuthStore();
   const pathname = usePathname();
   const router = useRouter();
@@ -226,7 +210,7 @@ function MobileNav({
     pathname === '/create'
       ? 'Assignment'
       : pathname === '/dashboard'
-        ? 'Assignments'
+        ? 'Assignment'
         : pathname === '/groups'
           ? 'My Groups'
           : pathname === '/library'
@@ -262,21 +246,9 @@ function MobileNav({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-
-            <svg
-              className="w-4 h-4 text-[#8A8F98] flex-shrink-0"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <rect x="1.5" y="1.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-              <rect x="6.5" y="1.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-              <rect x="11.5" y="1.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-              <rect x="1.5" y="6.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-              <rect x="6.5" y="6.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-              <rect x="11.5" y="6.5" width="3.5" height="3.5" rx="1" fill="currentColor" />
-            </svg>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+        </svg>
 
             <h2 className="text-[14px] font-semibold text-[#6B7280] leading-none truncate">{title}</h2>
           </div>
@@ -429,21 +401,79 @@ function MobileBottomBar() {
 }
 
 function AuthenticatedHeader() {
+  const router = useRouter();
+  const pathname = usePathname();
   const { user } = useAuthStore();
+  const title =
+    pathname === '/create'
+      ? 'Assignment'
+      : pathname === '/dashboard'
+        ? 'Assignment'
+        : pathname === '/groups'
+          ? 'My Groups'
+          : pathname === '/library'
+            ? 'My Library'
+            : pathname === '/toolkit'
+              ? "AI Teacher's Toolkit"
+              : pathname === '/settings'
+                ? 'Settings'
+                : pathname === '/profile'
+                  ? 'Profile'
+                  : pathname.startsWith('/results/')
+                    ? 'Result'
+                    : 'Assignment';
 
   return (
-    <header className="h-14 hidden md:flex items-center justify-between px-6 lg:px-8">
-      <div />
-      <div className="flex items-center gap-3">
-        <Image
-          src="/Avatar.png"
-          alt="User avatar"
-          width={60}
-          height={60}
-          className="w-9 h-9 rounded-full object-cover flex-shrink-0"
-        />
-        <div className="flex items-center gap-2 bg-white/[0.04] rounded-full pl-1 pr-3 py-1 border border-white/[0.06]">
-          <span className="text-sm font-medium text-zinc-300">{user?.name}</span>
+    <header className="hidden md:block px-6 lg:px-8 pt-3 pb-2">
+      <div className="h-12 rounded-2xl bg-white border border-black/5 shadow-[0_1px_6px_rgba(0,0,0,0.08)] flex items-center justify-between px-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== 'undefined' && window.history.length > 1) router.back();
+              else router.push('/dashboard');
+            }}
+            className="w-8 h-8 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center"
+            aria-label="Go back"
+          >
+            <svg className="w-4 h-4 text-[#1A1A1A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+        </svg>
+
+          <h2 className="text-[14px] font-semibold text-[#6B7280] leading-none truncate">{title}</h2>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="relative w-8 h-8 rounded-full bg-transparent flex items-center justify-center"
+            aria-label="Notifications"
+          >
+            <svg className="w-4 h-4 text-[#1A1A1A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+            </svg>
+            <span className="absolute top-[6px] right-[6px] w-1.5 h-1.5 rounded-full bg-[#FF5A2A]" />
+          </button>
+
+          <div className="flex items-center gap-2 rounded-full px-2 py-1 bg-white border border-[#ECECEC] text-[#1A1A1A]">
+            <Image
+              src="/Avatar.png"
+              alt="User avatar"
+              width={28}
+              height={28}
+              className="w-7 h-7 rounded-full object-cover flex-shrink-0"
+            />
+            <span className="text-[13px] font-semibold text-[#1A1A1A] max-w-[110px] truncate">
+              {user?.name || 'John Doe'}
+            </span>
+            <svg className="w-4 h-4 text-[#1A1A1A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
         </div>
       </div>
     </header>
@@ -467,18 +497,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     }
   }, [isDashboard]);
 
-  const toggleDashboardTheme = React.useCallback(() => {
-    setDashboardTheme((prev) => {
-      const next: DashboardTheme = prev === 'dark' ? 'light' : 'dark';
-      try {
-        window.localStorage.setItem('kaash.dashboardTheme', next);
-      } catch {
-        // ignore
-      }
-      return next;
-    });
-  }, []);
-
   if (isPublic) {
     return <AuthProvider>{children}</AuthProvider>;
   }
@@ -489,20 +507,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         className={`flex min-h-dvh overflow-hidden ${isDashboard ? `dashboard-theme-${dashboardTheme}` : ''}`}
         style={{ background: isDashboard ? 'var(--dash-bg)' : undefined }}
       >
-        <Sidebar
-          showDashboardThemeToggle={isDashboard}
-          dashboardTheme={dashboardTheme}
-          onToggleDashboardTheme={toggleDashboardTheme}
-        />
+        <Sidebar />
         <main
           className="flex-1 flex flex-col min-h-dvh overflow-y-auto"
           style={{ background: isDashboard ? 'var(--dash-surface-2)' : undefined, color: isDashboard ? 'var(--dash-fg)' : undefined }}
         >
-          <MobileNav
-            showDashboardThemeToggle={isDashboard}
-            dashboardTheme={dashboardTheme}
-            onToggleDashboardTheme={toggleDashboardTheme}
-          />
+          <MobileNav />
           <AuthenticatedHeader />
           <div className="px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:py-8 lg:pb-8">{children}</div>
           <MobileBottomBar />
