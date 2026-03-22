@@ -42,23 +42,61 @@ export default function DashboardPage() {
 
   if (assignments.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full pt-20">
-        <div
-          className="w-32 h-32 rounded-3xl flex items-center justify-center mb-8 border"
-          style={{ background: 'var(--dash-input)', borderColor: 'var(--dash-border-2)' }}
-        >
-          <svg className="w-12 h-12" style={{ color: 'var(--dash-muted-2)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-          </svg>
+      <>
+        <div className="md:hidden flex flex-col items-center text-center pt-8 min-h-[65dvh]">
+          <div className="relative mb-7 w-[190px] h-[190px]">
+            <div className="absolute inset-0 rounded-full bg-[#E5E5E7]" />
+            <div className="absolute inset-x-5 top-9 h-[92px] rounded-2xl bg-[#EFEFEF] border border-[#E1E1E1] p-3">
+              <div className="h-2.5 w-9 bg-[#0F2238] rounded-full mb-2" />
+              <div className="space-y-2">
+                <div className="h-2 w-16 bg-[#D5D5D5] rounded-full" />
+                <div className="h-2 w-20 bg-[#D5D5D5] rounded-full" />
+                <div className="h-2 w-14 bg-[#D5D5D5] rounded-full" />
+              </div>
+            </div>
+            <div className="absolute right-5 top-10 w-11 h-7 rounded-md bg-[#EBEBED] border border-[#DADADD]" />
+            <div className="absolute right-9 top-[52px] w-4 h-1.5 rounded-full bg-[#AEAFB4]" />
+            <div className="absolute left-[62px] top-[66px] w-[78px] h-[78px] rounded-full border-[7px] border-[#C8C0DB]">
+              <div className="relative w-full h-full flex items-center justify-center">
+                <div className="w-9 h-9 rounded-full bg-[#F8F5FF] flex items-center justify-center">
+                  <span className="relative w-5 h-5 block">
+                    <span className="absolute left-1/2 top-0 h-5 w-[4px] bg-[#FF5A5F] rounded-full -translate-x-1/2 rotate-45" />
+                    <span className="absolute left-1/2 top-0 h-5 w-[4px] bg-[#FF5A5F] rounded-full -translate-x-1/2 -rotate-45" />
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="absolute left-[130px] top-[132px] w-7 h-[9px] rounded-full bg-[#CFCADF] rotate-[42deg]" />
+            <div className="absolute left-[168px] top-[128px] w-2 h-2 rounded-full bg-[#2F83BD]" />
+          </div>
+
+          <h2 className="text-[34px] leading-none font-semibold text-[#2D2D2D] mb-3">No assignments </h2>
+          <p className="text-[13px] leading-7 text-[#77797F] max-w-[320px] mb-8">
+            Create your first assignment to start collecting and grading student submissions. You can set up rubrics, define marking criteria, and let AI assist with grading.
+          </p>
+          <Link href="/create" className="bg-[#111216] text-white font-semibold rounded-full py-3.5 px-9 text-[14px] shadow-[0_3px_8px_rgba(0,0,0,0.2)]">
+            + Create Assignment
+          </Link>
         </div>
-        <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--dash-fg)' }}>No assignments yet</h2>
-        <p className="text-center max-w-sm mb-8" style={{ color: 'var(--dash-muted)' }}>
-          Create your first assignment to start generating AI-powered exam papers from your curriculum.
-        </p>
-        <Link href="/create" className="bg-white text-black font-semibold rounded-full py-3 px-6 hover:bg-zinc-200 transition">
-          + Create Your First Assignment
-        </Link>
-      </div>
+
+        <div className="hidden md:flex flex-col items-center justify-center h-full pt-20">
+          <div
+            className="w-32 h-32 rounded-3xl flex items-center justify-center mb-8 border"
+            style={{ background: 'var(--dash-input)', borderColor: 'var(--dash-border-2)' }}
+          >
+            <svg className="w-12 h-12" style={{ color: 'var(--dash-muted-2)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--dash-fg)' }}>No assignments yet</h2>
+          <p className="text-center max-w-sm mb-8" style={{ color: 'var(--dash-muted)' }}>
+            Create your first assignment to start generating AI-powered exam papers from your curriculum.
+          </p>
+          <Link href="/create" className="bg-white text-black font-semibold rounded-full py-3 px-6 hover:bg-zinc-200 transition">
+            + Create Your First Assignment
+          </Link>
+        </div>
+      </>
     );
   }
 

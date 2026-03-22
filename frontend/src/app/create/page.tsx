@@ -7,6 +7,7 @@ import SectionConfigurator from '@/components/forms/SectionConfigurator';
 import GenerationProgress from '@/components/ui/GenerationProgress';
 import { useWebSocket } from '@/lib/useWebSocket';
 import { getAuthHeader } from '@/store/authStore';
+import CreateAssignmentMobile from '@/components/mobile/CreateAssignmentMobile';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -108,8 +109,8 @@ export default function CreateAssignmentPage() {
     }
   };
 
-  return (
-    <div className="max-w-4xl mx-auto pb-16">
+  const desktop = (
+    <div className="hidden md:block max-w-4xl mx-auto pb-16">
       <div className="mb-8 sm:mb-10 text-center">
         <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 tracking-tight" style={{ color: 'var(--dash-fg)' }}>
           Create Assignment
@@ -234,5 +235,12 @@ export default function CreateAssignmentPage() {
 
       {isSubmitting && <GenerationProgress status={status} />}
     </div>
+  );
+
+  return (
+    <>
+      {desktop}
+      <CreateAssignmentMobile />
+    </>
   );
 }
